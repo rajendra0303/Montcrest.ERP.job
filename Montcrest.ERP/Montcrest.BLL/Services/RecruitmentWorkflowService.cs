@@ -1,6 +1,7 @@
 ﻿using Montcrest.BLL.DTOs.Hr;
 using Montcrest.BLL.Interfaces;
 using Montcrest.DAL.Enums;
+using Montcrest.DAL.Models;
 using Montcrest.DAL.Repositories.Interfaces;
 
 namespace Montcrest.BLL.Services
@@ -11,19 +12,22 @@ namespace Montcrest.BLL.Services
         private readonly IUserRepository _userRepo;
         private readonly IEmailService _emailService;
         private readonly IGoogleSheetService _googleSheetService;
+        private readonly IEmployeeRepository _employeeRepo;
 
-        private const int PassMarks = 35;
+        private const int PassMarks = 3;
 
         public RecruitmentWorkflowService(
             IJobApplicationRepository jobRepo,
             IUserRepository userRepo,
             IEmailService emailService,
-            IGoogleSheetService googleSheetService)
+            IGoogleSheetService googleSheetService,
+            IEmployeeRepository employeeRepo)
         {
             _jobRepo = jobRepo;
             _userRepo = userRepo;
             _emailService = emailService;
             _googleSheetService = googleSheetService;
+            _employeeRepo = employeeRepo;
         }
 
         public async Task<HrApplicantReviewDto> GetApplicationForReviewAsync(int applicationId)
@@ -154,6 +158,19 @@ namespace Montcrest.BLL.Services
                 user.JoinedOn = DateTime.UtcNow;
 
                 await _userRepo.UpdateAsync(user);
+
+                var existingEmployee = await _employeeRepo.GetByUserIdAsync(user.Id);
+
+                if (existingEmployee == null)
+                {
+                    var employee = new Employee
+                    {
+                        UserId = user.Id,
+                        ManagerId = 1, // Default manager, can be updated later
+                        JoinedOn = user.JoinedOn ?? DateTime.UtcNow
+                    };
+                    await _employeeRepo.AddAsync(employee);
+                }
             }
             else
             {

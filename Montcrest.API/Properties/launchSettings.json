@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Montcrest.API": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:58563;http://localhost:58564"
+    }
+  }
+}

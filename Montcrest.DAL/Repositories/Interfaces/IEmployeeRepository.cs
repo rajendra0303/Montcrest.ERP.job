@@ -6,5 +6,7 @@ namespace Montcrest.DAL.Repositories.Interfaces
     {
         Task<Employee?> GetByUserIdAsync(int userId);
         Task<Employee?> GetByIdAsync(int employeeId);
+
+        Task AddAsync(Employee employee);
     }
 }

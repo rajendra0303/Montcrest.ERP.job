@@ -22,6 +22,11 @@ namespace Montcrest.DAL.Repositories.Implementations
                     .ThenInclude(m => m.User)
                 .FirstOrDefaultAsync(e => e.UserId == userId);
         }
+        public async Task AddAsync(Employee employee)
+        {
+            await _context.Employees.AddAsync(employee);
+            await _context.SaveChangesAsync();
+        }
 
         public async Task<Employee?> GetByIdAsync(int employeeId)
         {
